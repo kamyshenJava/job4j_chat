@@ -6,5 +6,5 @@ import ru.job4j.domain.Message;
 import java.util.List;
 
 public interface MessageRepository extends CrudRepository<Message, Integer> {
-    List<Message> findMessagesByRoomId(int id);
+    List<Message> findMessagesByRoomIdOrderByCreated(int id);
 }

@@ -28,10 +28,9 @@ public class Person {
     @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
-    public static Person of(String username, String password) {
+    public static Person of(int id) {
         Person person = new Person();
-        person.username = username;
-        person.password = password;
+        person.id = id;
         person.enabled = true;
         return person;
     }

@@ -17,8 +17,6 @@ public class Message {
 
     @Column(columnDefinition = "timestamp without time zone not null default now()")
     private LocalDateTime created;
-    @Transient
-    private String createdTimeAgo;
 
     public int getId() {
         return id;
@@ -50,14 +48,6 @@ public class Message {
 
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    public String getCreatedTimeAgo() {
-        return createdTimeAgo;
-    }
-
-    public void setCreatedTimeAgo(String createdTimeAgo) {
-        this.createdTimeAgo = createdTimeAgo;
     }
 
     public LocalDateTime getCreated() {

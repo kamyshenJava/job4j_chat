@@ -61,25 +61,64 @@
                         <div th:each="message : ${messages}" class="mt-2">
                             <div class="d-flex flex-row p-3">
                                 <div class="w-100">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex flex-row align-items-center">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex flex-row align-items-center me-auto p-2">
                                             <h6 class="mr-2" th:text="${message.person.username}"></h6>
                                         </div>
-                                        <small th:text="${message.createdTimeAgo}"></small>
+
+                                        <div class="d-flex justify-content-end p-2" th:if="${person.username != 'guest' and person.role.role == 'ROLE_ADMIN'}">
+                                            <button type="button" class="btn btn-primary btn-sm my-3 me-1 shadow"
+                                                    data-bs-toggle="modal" th:data-bs-target="${'#edit' + message.id}">
+                                                Edit the message
+                                            </button>
+
+                                            <div class="modal fade" th:id="${'edit' + message.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title mx-auto heading-section" id="staticBackdropLabel">Edit the message</h3>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form th:action="@{/edit_message}" method="POST">
+                                                                <input type="hidden" name="room_id" th:value="${room.id}">
+                                                                <input type="hidden" name="id" th:value="${message.id}">
+                                                                <input type="hidden" name="person_id" th:value="${message.person.id}">
+                                                                <input type="hidden" name="created1" th:value="${message.created}">
+                                                                <div class="mb-4">
+                                                                    <input type="text" maxlength="100" class="form-control form-control-lg" name="body"
+                                                                           th:value="${message.body}" required>
+                                                                </div>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <form th:action="@{/delete_message/{id}(id=${message.id})}" method="post">
+                                                <input type="hidden" name="room_id" th:value="${room.id}">
+                                                <button type="submit" class="btn btn-primary btn-sm w-100 my-3 shadow">
+                                                    Delete the message
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="class=d-flex flex-row align-items-center p-2">
+                                            <small th:text="${#temporals.format(message.getCreated(), 'dd MMM yyyy HH-mm')}"></small>
+                                        </div>
                                     </div>
                                     <p class="text-justify comment-text mb-0" th:text="${message.body}"></p>
                                 </div>
                             </div>
                         </div>
-
                 </div>
             </div>
         </div>
     </div>
-
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
 <script>
     function submit_form(){
         var form = document.getElementById("my_form");

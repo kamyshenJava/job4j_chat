@@ -17,16 +17,15 @@ import ru.job4j.service.MessageService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
 public class ChatController {
     private static final String API_MESSAGE = "http://localhost:8080/message/";
+    private static final String API_MESSAGE_ID = "http://localhost:8080/message/{id}";
     private static final String API_MESSAGE_ROOM = "http://localhost:8080/message/room/{id}";
     private static final String API_ID = "http://localhost:8080/room/{id}";
-
-    @Autowired
-    private MessageService messageService;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -38,7 +37,7 @@ public class ChatController {
                 null, new ParameterizedTypeReference<List<Message>>() { }, id
         ).getBody();
         model.addAttribute("room", room);
-        model.addAttribute("messages", messageService.setCreatedTimeAgoForMessages(messages));
+        model.addAttribute("messages", messages);
         return "room";
     }
 
@@ -49,6 +48,25 @@ public class ChatController {
         message.setRoom(Room.of(roomId));
         message.setPerson(person);
         restTemplate.postForObject(API_MESSAGE, message, Message.class);
+        return String.format("redirect:/chatroom/%d", roomId);
+    }
+
+    @PostMapping("/delete_message/{id}")
+    public String deleteMessage(@PathVariable("id") int id, HttpServletRequest req) {
+        int roomId = Integer.parseInt(req.getParameter("room_id"));
+        restTemplate.delete(API_MESSAGE_ID, id);
+        return String.format("redirect:/chatroom/%d", roomId);
+    }
+
+    @PostMapping("edit_message")
+    public String editMessage(@ModelAttribute Message message, HttpServletRequest req, HttpSession session) {
+        int roomId = Integer.parseInt(req.getParameter("room_id"));
+        Person person = Person.of(Integer.parseInt(req.getParameter("person_id")));
+        LocalDateTime created = LocalDateTime.parse(req.getParameter("created1"));
+        message.setRoom(Room.of(roomId));
+        message.setPerson(person);
+        message.setCreated(created);
+        restTemplate.put(API_MESSAGE, message);
         return String.format("redirect:/chatroom/%d", roomId);
     }
 

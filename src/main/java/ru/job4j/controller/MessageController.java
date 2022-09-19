@@ -27,4 +27,16 @@ public class MessageController {
     public ResponseEntity<Message> create(@RequestBody Message message) {
         return new ResponseEntity<>(messageService.createMessage(message), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{id}")
+    public HttpStatus delete(@PathVariable int id) {
+        messageService.deleteMessage(id);
+        return HttpStatus.OK;
+    }
+
+    @PutMapping("/")
+    public HttpStatus update(@RequestBody Message message) {
+        messageService.updateMessage(message);
+        return HttpStatus.OK;
+    }
 }
